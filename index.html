@@ -16,9 +16,7 @@ header p{color:#fff;font-size:.95em;opacity:.85}
 .save-bar .status{color:#aee6a1;font-size:.82em;flex:1;min-width:160px}
 .save-bar button,.imp-lbl{padding:8px 14px;border:none;border-radius:7px;font-size:.82em;font-weight:700;cursor:pointer;transition:opacity .2s;white-space:nowrap}
 .save-bar button:hover,.imp-lbl:hover{opacity:.82}
-.btn-json{background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4)!important}
-.imp-lbl{background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);display:inline-block}
-.btn-xlsx{background:#1D6F42;color:#fff}
+
 .btn-enviar{background:#FFD700;color:#003366;font-size:.9em!important;padding:9px 16px!important}
 #impFile{display:none}
 .nome-section{background:rgba(255,255,255,.95);border-radius:12px;padding:15px 20px;margin-bottom:18px;box-shadow:0 4px 15px rgba(0,0,0,.2);display:flex;align-items:center;gap:12px}
@@ -30,7 +28,7 @@ header p{color:#fff;font-size:.95em;opacity:.85}
 .progresso-bar-wrap{background:rgba(0,0,0,.3);border-radius:8px;height:9px;margin:0 0 20px}
 .progresso-bar{height:9px;border-radius:8px;background:linear-gradient(90deg,#FFD700,#FFA500);transition:width .4s}
 .grupos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;margin-bottom:24px}
-.grupo-card{background:rgba(255,255,255,.97);border-radius:13px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.14)}
+.grupo-card{background:rgba(255,255,255,.97);border-radius:13px;box-shadow:0 4px 16px rgba(0,0,0,.14)}
 .grupo-header{padding:11px 16px;color:#fff;display:flex;align-items:center;gap:9px;font-weight:700;font-size:1em}
 .grupo-header .letter{background:rgba(255,255,255,.25);width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;flex-shrink:0}
 .grupo-header .sel-count{margin-left:auto;font-size:.72em;font-weight:600;background:rgba(255,255,255,.2);padding:2px 9px;border-radius:12px}
@@ -45,6 +43,18 @@ header p{color:#fff;font-size:.95em;opacity:.85}
 .badge-2{background:#C0C0C0;color:#333}
 .aviso-limite{color:#c00;font-size:.73em;padding:3px 9px;display:none;text-align:center;font-weight:600}
 .aviso-limite.show{display:block}
+/* TOOLTIP JOGOS — posicionado via JS com fixed para não ser cortado por overflow */
+#tt-global{display:none;position:fixed;z-index:9999;background:#1a1a2e;border:1px solid rgba(255,215,0,.5);border-radius:10px;padding:9px 13px;min-width:210px;max-width:260px;box-shadow:0 6px 24px rgba(0,0,0,.55);pointer-events:none}
+#tt-global.vis{display:block}
+.tt-title{color:#FFD700;font-size:.72em;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;border-bottom:1px solid rgba(255,215,0,.25);padding-bottom:4px}
+.tt-jogo{display:flex;align-items:center;gap:6px;padding:3px 0;border-bottom:1px dashed rgba(255,255,255,.08)}
+.tt-jogo:last-child{border-bottom:none}
+.tt-data{color:#aaa;font-size:.68em;white-space:nowrap;flex-shrink:0}
+.tt-vs{color:#eee;font-size:.75em;flex:1;font-weight:600}
+.tt-vs em{color:#888;font-style:normal;font-size:.9em}
+/* seta do tooltip */
+#tt-global::before{content:'';position:absolute;top:-6px;left:50%;transform:translateX(-50%);border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:6px solid rgba(255,215,0,.5)}
+#tt-global::after{content:'';position:absolute;top:-5px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:5px solid #1a1a2e}
 .btns-finais{max-width:440px;margin:0 auto 28px}
 .btn-ver{display:block;width:100%;padding:15px;background:linear-gradient(135deg,#FFD700,#FFA500);color:#003366;border:none;border-radius:12px;font-size:1.05em;font-weight:700;cursor:pointer;box-shadow:0 4px 15px rgba(255,165,0,.4);transition:transform .2s;margin-bottom:9px}
 .btn-ver:hover{transform:translateY(-2px)}
@@ -81,9 +91,7 @@ header p{color:#fff;font-size:.95em;opacity:.85}
 
   <div class="save-bar">
     <span class="status" id="saveStatus">💾 Apostas salvas automaticamente no navegador</span>
-    <button class="btn-json" onclick="exportarJSON()">⬇️ Backup JSON</button>
-    <label class="imp-lbl" for="impFile">⬆️ Importar JSON</label>
-    <input type="file" id="impFile" accept=".json" onchange="importarJSON(event)">
+
     <button class="btn-xlsx btn-enviar" onclick="exportarParaOrganizador()">📤 Exportar e enviar ao organizador (.xlsx)</button>
   </div>
 
@@ -117,6 +125,7 @@ header p{color:#fff;font-size:.95em;opacity:.85}
     <button class="bcf" onclick="document.getElementById('rModal').classList.remove('ativo')">✕ Fechar</button>
   </div>
 </div>
+<div id="tt-global"></div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -134,6 +143,95 @@ var GRUPOS=[
   {l:'K',c:'#6a0572',times:['🇵🇹 Portugal','🇨🇩 RD Congo','🇺🇿 Uzbequistão','🇨🇴 Colômbia']},
   {l:'L',c:'#b5451b',times:['🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra','🇭🇷 Croácia','🇬🇭 Gana','🇵🇦 Panamá']}
 ];
+
+// Jogos da fase de grupos por time (índice = posição no array times do grupo)
+// Formato: {d: 'dd/mm', h: 'HHh', adv: 'Nome adversário'}
+var JOGOS_GRUPO = [
+  // Grupo A: México[0], Coreia do Sul[1], Tchéquia[2], África do Sul[3]
+  [
+    [{d:'11/06',h:'16h',adv:'🇿🇦 África do Sul'},{d:'18/06',h:'22h',adv:'🇰🇷 Coreia do Sul'},{d:'24/06',h:'22h',adv:'🇨🇿 Tchéquia'}],
+    [{d:'11/06',h:'23h',adv:'🇨🇿 Tchéquia'},{d:'18/06',h:'22h',adv:'🇲🇽 México'},{d:'24/06',h:'22h',adv:'🇿🇦 África do Sul'}],
+    [{d:'11/06',h:'23h',adv:'🇰🇷 Coreia do Sul'},{d:'18/06',h:'13h',adv:'🇿🇦 África do Sul'},{d:'24/06',h:'22h',adv:'🇲🇽 México'}],
+    [{d:'11/06',h:'16h',adv:'🇲🇽 México'},{d:'18/06',h:'13h',adv:'🇨🇿 Tchéquia'},{d:'24/06',h:'22h',adv:'🇰🇷 Coreia do Sul'}]
+  ],
+  // Grupo B: Canadá[0], Bósnia[1], Catar[2], Suíça[3]
+  [
+    [{d:'12/06',h:'16h',adv:'🇧🇦 Bósnia'},{d:'19/06',h:'19h',adv:'🇶🇦 Catar'},{d:'24/06',h:'16h',adv:'🇨🇭 Suíça'}],
+    [{d:'12/06',h:'16h',adv:'🇨🇦 Canadá'},{d:'18/06',h:'16h',adv:'🇨🇭 Suíça'},{d:'24/06',h:'16h',adv:'🇶🇦 Catar'}],
+    [{d:'13/06',h:'16h',adv:'🇨🇭 Suíça'},{d:'19/06',h:'19h',adv:'🇨🇦 Canadá'},{d:'24/06',h:'16h',adv:'🇧🇦 Bósnia'}],
+    [{d:'13/06',h:'16h',adv:'🇶🇦 Catar'},{d:'18/06',h:'16h',adv:'🇧🇦 Bósnia'},{d:'24/06',h:'16h',adv:'🇨🇦 Canadá'}]
+  ],
+  // Grupo C: Brasil[0], Marrocos[1], Escócia[2], Haiti[3]
+  [
+    [{d:'13/06',h:'19h',adv:'🇲🇦 Marrocos'},{d:'19/06',h:'22h',adv:'🇭🇹 Haiti'},{d:'24/06',h:'19h',adv:'🏴󠁧󠁢󠁳󠁣󠁴󠁿 Escócia'}],
+    [{d:'13/06',h:'19h',adv:'🇧🇷 Brasil'},{d:'19/06',h:'19h',adv:'🏴󠁧󠁢󠁳󠁣󠁴󠁿 Escócia'},{d:'24/06',h:'19h',adv:'🇭🇹 Haiti'}],
+    [{d:'13/06',h:'22h',adv:'🇭🇹 Haiti'},{d:'19/06',h:'19h',adv:'🇲🇦 Marrocos'},{d:'24/06',h:'19h',adv:'🇧🇷 Brasil'}],
+    [{d:'13/06',h:'22h',adv:'🏴󠁧󠁢󠁳󠁣󠁴󠁿 Escócia'},{d:'19/06',h:'22h',adv:'🇧🇷 Brasil'},{d:'24/06',h:'19h',adv:'🇲🇦 Marrocos'}]
+  ],
+  // Grupo D: EUA[0], Paraguai[1], Austrália[2], Turquia[3]
+  [
+    [{d:'12/06',h:'22h',adv:'🇵🇾 Paraguai'},{d:'19/06',h:'16h',adv:'🇦🇺 Austrália'},{d:'25/06',h:'20h',adv:'🇹🇷 Turquia'}],
+    [{d:'12/06',h:'22h',adv:'🇺🇸 EUA'},{d:'19/06',h:'1h',adv:'🇹🇷 Turquia'},{d:'25/06',h:'20h',adv:'🇦🇺 Austrália'}],
+    [{d:'13/06',h:'1h',adv:'🇹🇷 Turquia'},{d:'19/06',h:'16h',adv:'🇺🇸 EUA'},{d:'25/06',h:'20h',adv:'🇵🇾 Paraguai'}],
+    [{d:'13/06',h:'1h',adv:'🇦🇺 Austrália'},{d:'19/06',h:'1h',adv:'🇵🇾 Paraguai'},{d:'25/06',h:'20h',adv:'🇺🇸 EUA'}]
+  ],
+  // Grupo E: Alemanha[0], Curaçao[1], Costa do Marfim[2], Equador[3]
+  [
+    [{d:'14/06',h:'14h',adv:'🇨🇼 Curaçao'},{d:'20/06',h:'17h',adv:'🇨🇮 C. Marfim'},{d:'25/06',h:'17h',adv:'🇪🇨 Equador'}],
+    [{d:'14/06',h:'14h',adv:'🇩🇪 Alemanha'},{d:'20/06',h:'21h',adv:'🇪🇨 Equador'},{d:'25/06',h:'17h',adv:'🇨🇮 C. Marfim'}],
+    [{d:'14/06',h:'20h',adv:'🇪🇨 Equador'},{d:'20/06',h:'17h',adv:'🇩🇪 Alemanha'},{d:'25/06',h:'17h',adv:'🇨🇼 Curaçao'}],
+    [{d:'14/06',h:'20h',adv:'🇨🇮 C. Marfim'},{d:'20/06',h:'21h',adv:'🇨🇼 Curaçao'},{d:'25/06',h:'17h',adv:'🇩🇪 Alemanha'}]
+  ],
+  // Grupo F: Holanda[0], Japão[1], Suécia[2], Tunísia[3]
+  [
+    [{d:'14/06',h:'17h',adv:'🇯🇵 Japão'},{d:'20/06',h:'14h',adv:'🇸🇪 Suécia'},{d:'25/06',h:'20h',adv:'🇹🇳 Tunísia'}],
+    [{d:'14/06',h:'17h',adv:'🇳🇱 Holanda'},{d:'21/06',h:'1h',adv:'🇹🇳 Tunísia'},{d:'25/06',h:'20h',adv:'🇸🇪 Suécia'}],
+    [{d:'14/06',h:'23h',adv:'🇹🇳 Tunísia'},{d:'20/06',h:'14h',adv:'🇳🇱 Holanda'},{d:'25/06',h:'20h',adv:'🇯🇵 Japão'}],
+    [{d:'14/06',h:'23h',adv:'🇸🇪 Suécia'},{d:'21/06',h:'1h',adv:'🇯🇵 Japão'},{d:'25/06',h:'20h',adv:'🇳🇱 Holanda'}]
+  ],
+  // Grupo G: Bélgica[0], Egito[1], Irã[2], Nova Zelândia[3]
+  [
+    [{d:'15/06',h:'16h',adv:'🇪🇬 Egito'},{d:'21/06',h:'16h',adv:'🇮🇷 Irã'},{d:'26/06',h:'16h',adv:'🇳🇿 Nova Zelândia'}],
+    [{d:'15/06',h:'16h',adv:'🇧🇪 Bélgica'},{d:'21/06',h:'22h',adv:'🇳🇿 Nova Zelândia'},{d:'26/06',h:'16h',adv:'🇮🇷 Irã'}],
+    [{d:'15/06',h:'22h',adv:'🇳🇿 Nova Zelândia'},{d:'21/06',h:'16h',adv:'🇧🇪 Bélgica'},{d:'26/06',h:'16h',adv:'🇪🇬 Egito'}],
+    [{d:'15/06',h:'22h',adv:'🇮🇷 Irã'},{d:'21/06',h:'22h',adv:'🇪🇬 Egito'},{d:'26/06',h:'16h',adv:'🇧🇪 Bélgica'}]
+  ],
+  // Grupo H: Espanha[0], Cabo Verde[1], Arábia Saudita[2], Uruguai[3]
+  [
+    [{d:'15/06',h:'13h',adv:'🇨🇻 Cabo Verde'},{d:'21/06',h:'13h',adv:'🇸🇦 Arábia Saudita'},{d:'26/06',h:'20h',adv:'🇺🇾 Uruguai'}],
+    [{d:'15/06',h:'13h',adv:'🇪🇸 Espanha'},{d:'21/06',h:'19h',adv:'🇺🇾 Uruguai'},{d:'26/06',h:'20h',adv:'🇸🇦 Arábia Saudita'}],
+    [{d:'15/06',h:'19h',adv:'🇺🇾 Uruguai'},{d:'21/06',h:'13h',adv:'🇪🇸 Espanha'},{d:'26/06',h:'20h',adv:'🇨🇻 Cabo Verde'}],
+    [{d:'15/06',h:'19h',adv:'🇸🇦 Arábia Saudita'},{d:'21/06',h:'19h',adv:'🇨🇻 Cabo Verde'},{d:'26/06',h:'20h',adv:'🇪🇸 Espanha'}]
+  ],
+  // Grupo I: França[0], Senegal[1], Iraque[2], Noruega[3]
+  [
+    [{d:'16/06',h:'16h',adv:'🇸🇳 Senegal'},{d:'22/06',h:'18h',adv:'🇮🇶 Iraque'},{d:'26/06',h:'20h',adv:'🇳🇴 Noruega'}],
+    [{d:'16/06',h:'16h',adv:'🇫🇷 França'},{d:'22/06',h:'21h',adv:'🇳🇴 Noruega'},{d:'26/06',h:'20h',adv:'🇮🇶 Iraque'}],
+    [{d:'16/06',h:'19h',adv:'🇳🇴 Noruega'},{d:'22/06',h:'18h',adv:'🇫🇷 França'},{d:'26/06',h:'20h',adv:'🇸🇳 Senegal'}],
+    [{d:'16/06',h:'19h',adv:'🇮🇶 Iraque'},{d:'22/06',h:'21h',adv:'🇸🇳 Senegal'},{d:'26/06',h:'20h',adv:'🇫🇷 França'}]
+  ],
+  // Grupo J: Argentina[0], Argélia[1], Áustria[2], Jordânia[3]
+  [
+    [{d:'16/06',h:'14h',adv:'🇩🇿 Argélia'},{d:'22/06',h:'14h',adv:'🇦🇹 Áustria'},{d:'27/06',h:'16h',adv:'🇯🇴 Jordânia'}],
+    [{d:'16/06',h:'14h',adv:'🇦🇷 Argentina'},{d:'23/06',h:'0h',adv:'🇯🇴 Jordânia'},{d:'27/06',h:'16h',adv:'🇦🇹 Áustria'}],
+    [{d:'17/06',h:'1h',adv:'🇯🇴 Jordânia'},{d:'22/06',h:'14h',adv:'🇦🇷 Argentina'},{d:'27/06',h:'16h',adv:'🇩🇿 Argélia'}],
+    [{d:'17/06',h:'1h',adv:'🇦🇹 Áustria'},{d:'23/06',h:'0h',adv:'🇩🇿 Argélia'},{d:'27/06',h:'16h',adv:'🇦🇷 Argentina'}]
+  ],
+  // Grupo K: Portugal[0], RD Congo[1], Uzbequistão[2], Colômbia[3]
+  [
+    [{d:'17/06',h:'14h',adv:'🇨🇩 RD Congo'},{d:'23/06',h:'14h',adv:'🇺🇿 Uzbequistão'},{d:'27/06',h:'20h',adv:'🇨🇴 Colômbia'}],
+    [{d:'17/06',h:'14h',adv:'🇵🇹 Portugal'},{d:'23/06',h:'20h',adv:'🇨🇴 Colômbia'},{d:'27/06',h:'20h',adv:'🇺🇿 Uzbequistão'}],
+    [{d:'17/06',h:'23h',adv:'🇨🇴 Colômbia'},{d:'23/06',h:'14h',adv:'🇵🇹 Portugal'},{d:'27/06',h:'20h',adv:'🇨🇩 RD Congo'}],
+    [{d:'17/06',h:'23h',adv:'🇺🇿 Uzbequistão'},{d:'23/06',h:'20h',adv:'🇨🇩 RD Congo'},{d:'27/06',h:'20h',adv:'🇵🇹 Portugal'}]
+  ],
+  // Grupo L: Inglaterra[0], Croácia[1], Gana[2], Panamá[3]
+  [
+    [{d:'17/06',h:'17h',adv:'🇭🇷 Croácia'},{d:'23/06',h:'17h',adv:'🇬🇭 Gana'},{d:'27/06',h:'20h',adv:'🇵🇦 Panamá'}],
+    [{d:'17/06',h:'17h',adv:'🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra'},{d:'23/06',h:'20h',adv:'🇵🇦 Panamá'},{d:'27/06',h:'20h',adv:'🇬🇭 Gana'}],
+    [{d:'17/06',h:'20h',adv:'🇵🇦 Panamá'},{d:'23/06',h:'17h',adv:'🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra'},{d:'27/06',h:'20h',adv:'🇭🇷 Croácia'}],
+    [{d:'17/06',h:'20h',adv:'🇬🇭 Gana'},{d:'23/06',h:'20h',adv:'🇭🇷 Croácia'},{d:'27/06',h:'20h',adv:'🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra'}]
+  ]
+];
 var selecionados=GRUPOS.map(function(){return[];});
 var SAVE_KEY='copa2026_class_v2';
 
@@ -147,7 +245,18 @@ GRUPOS.forEach(function(g,gi){
   var h='<div class="grupo-header" style="background:'+g.c+'"><span class="letter">'+g.l+'</span><span>Grupo '+g.l+'</span><span class="sel-count" id="cnt_'+gi+'">0 / 2</span></div>';
   var l='<div class="times-lista">';
   g.times.forEach(function(t,ti){
-    l+='<label class="time-item" id="item_'+gi+'_'+ti+'" onclick="toggleTime('+gi+','+ti+',event)"><input type="checkbox" id="chk_'+gi+'_'+ti+'" onclick="return false"><span class="time-nome">'+t+'</span><span class="badge-pos" id="badge_'+gi+'_'+ti+'" style="display:none"></span></label>';
+    var jogos=JOGOS_GRUPO[gi][ti];
+    var jogosJson=encodeURIComponent(JSON.stringify(jogos));
+    l+='<label class="time-item" id="item_'+gi+'_'+ti+'"'+
+       ' data-jogos="'+jogosJson+'"'+
+       ' data-nome="'+t+'"'+
+       ' onmouseenter="mostrarTT(this,event)"'+
+       ' onmouseleave="esconderTT()"'+
+       ' onclick="toggleTime('+gi+','+ti+',event)">'+
+       '<input type="checkbox" id="chk_'+gi+'_'+ti+'" onclick="return false">'+
+       '<span class="time-nome">'+t+'</span>'+
+       '<span class="badge-pos" id="badge_'+gi+'_'+ti+'" style="display:none"></span>'+
+       '</label>';
   });
   l+='</div><p class="aviso-limite" id="aviso_'+gi+'">⚠️ Já selecionou 2! Desmarque um para trocar.</p>';
   card.innerHTML=h+l;
@@ -213,19 +322,7 @@ window.addEventListener('load',function(){
   try{var r=localStorage.getItem(SAVE_KEY);if(r){aplicarDados(JSON.parse(r));var c=selecionados.filter(function(s){return s.length===2;}).length;document.getElementById('saveStatus').innerHTML='✅ Restaurado · '+c+'/12 grupos';mostrarToast('Apostas restauradas!','ok');}}catch(e){}
 });
 
-function exportarJSON(){
-  var d=coletarDados();d.exportadoEm=new Date().toLocaleString('pt-BR');d.tipo='copa2026_class';
-  var blob=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
-  var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;
-  a.download='backup_apostas_'+(d.nome||'participante').replace(/[^a-zA-Z0-9]/g,'_')+'.json';
-  a.click();URL.revokeObjectURL(url);mostrarToast('Backup JSON exportado!','ok');
-}
-function importarJSON(evt){
-  var file=evt.target.files[0];if(!file)return;
-  var reader=new FileReader();
-  reader.onload=function(e){try{var d=JSON.parse(e.target.result);if(!d.selecionados)throw new Error();aplicarDados(d);localStorage.setItem(SAVE_KEY,JSON.stringify(d));mostrarToast('Apostas importadas!','ok');}catch(er){mostrarToast('Arquivo inválido!','err');}};
-  reader.readAsText(file);evt.target.value='';
-}
+
 
 // ── EXPORTAR PARA ORGANIZADOR ─────────────────────────────────────
 function exportarParaOrganizador(){
@@ -298,6 +395,39 @@ function mostrarResumo(){
   });
   document.getElementById('rConteudo').innerHTML=html;
   document.getElementById('rModal').classList.add('ativo');
+}
+
+// ── TOOLTIP GLOBAL ────────────────────────────────────────────────
+var ttEl=document.getElementById('tt-global');
+var ttTimer=null;
+function mostrarTT(el,e){
+  clearTimeout(ttTimer);
+  var jogos=JSON.parse(decodeURIComponent(el.getAttribute('data-jogos')));
+  var rodadas=['1ª rodada','2ª rodada','3ª rodada'];
+  var html='<div class="tt-title">⚽ Jogos na fase de grupos</div>';
+  jogos.forEach(function(j,ji){
+    html+='<div class="tt-jogo"><span class="tt-data">'+j.d+' '+j.h+'</span><span class="tt-vs"><em>'+rodadas[ji]+':</em> x '+j.adv+'</span></div>';
+  });
+  ttEl.innerHTML=html;
+  ttEl.classList.add('vis');
+  posicionarTT(el);
+}
+function posicionarTT(el){
+  var r=el.getBoundingClientRect();
+  var tw=ttEl.offsetWidth||220;
+  var th=ttEl.offsetHeight||90;
+  var left=r.left+r.width/2-tw/2;
+  var top=r.bottom+8;
+  // evitar sair da tela pela direita/esquerda
+  if(left+tw>window.innerWidth-8) left=window.innerWidth-tw-8;
+  if(left<8) left=8;
+  // se não couber embaixo, mostra acima
+  if(top+th>window.innerHeight-8) top=r.top-th-8;
+  ttEl.style.left=left+'px';
+  ttEl.style.top=top+'px';
+}
+function esconderTT(){
+  ttTimer=setTimeout(function(){ttEl.classList.remove('vis');},80);
 }
 
 function mostrarToast(msg,tipo){var t=document.getElementById('toast');t.textContent=msg;t.className='toast '+(tipo||'')+' show';setTimeout(function(){t.className='toast';},3200);}
