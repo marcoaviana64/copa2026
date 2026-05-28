@@ -3,301 +3,411 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Apostas - Classificados Copa 2026</title>
+<title>Organizador - Bolão Copa 2026</title>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',Arial,sans-serif;background:linear-gradient(135deg,#003366 0%,#006633 100%);min-height:100vh;padding:20px}
-.container{max-width:1000px;margin:0 auto}
-header{text-align:center;padding:24px 20px 14px}
-header h1{color:#FFD700;font-size:2.3em;text-shadow:2px 2px 4px rgba(0,0,0,.5);margin-bottom:5px}
-header p{color:#fff;font-size:.95em;opacity:.85}
-.save-bar{background:rgba(0,0,0,.35);border-radius:10px;padding:10px 16px;margin:12px 0 20px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.save-bar .status{color:#aee6a1;font-size:.82em;flex:1;min-width:160px}
-.save-bar button,.imp-lbl{padding:8px 14px;border:none;border-radius:7px;font-size:.82em;font-weight:700;cursor:pointer;transition:opacity .2s;white-space:nowrap}
-.save-bar button:hover,.imp-lbl:hover{opacity:.82}
-.btn-json{background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4)!important}
-.imp-lbl{background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);display:inline-block}
-.btn-xlsx{background:#1D6F42;color:#fff}
-.btn-enviar{background:#FFD700;color:#003366;font-size:.9em!important;padding:9px 16px!important}
-#impFile{display:none}
-.nome-section{background:rgba(255,255,255,.95);border-radius:12px;padding:15px 20px;margin-bottom:18px;box-shadow:0 4px 15px rgba(0,0,0,.2);display:flex;align-items:center;gap:12px}
-.nome-section label{font-weight:700;color:#003366;font-size:1em;white-space:nowrap}
-.nome-section input{flex:1;padding:9px 13px;border:2px solid #003366;border-radius:8px;font-size:1em;color:#333}
-.instrucao{background:rgba(255,215,0,.15);border:1px solid rgba(255,215,0,.4);border-radius:10px;padding:11px 16px;margin-bottom:18px;color:#fff;font-size:.86em;line-height:1.6}
-.instrucao strong{color:#FFD700}
-.progresso-txt{text-align:center;color:#fff;font-size:.84em;margin-bottom:7px;opacity:.9}
-.progresso-bar-wrap{background:rgba(0,0,0,.3);border-radius:8px;height:9px;margin:0 0 20px}
-.progresso-bar{height:9px;border-radius:8px;background:linear-gradient(90deg,#FFD700,#FFA500);transition:width .4s}
-.grupos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;margin-bottom:24px}
-.grupo-card{background:rgba(255,255,255,.97);border-radius:13px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.14)}
-.grupo-header{padding:11px 16px;color:#fff;display:flex;align-items:center;gap:9px;font-weight:700;font-size:1em}
-.grupo-header .letter{background:rgba(255,255,255,.25);width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;flex-shrink:0}
-.grupo-header .sel-count{margin-left:auto;font-size:.72em;font-weight:600;background:rgba(255,255,255,.2);padding:2px 9px;border-radius:12px}
-.times-lista{padding:9px 12px 12px}
-.time-item{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:8px;margin-bottom:5px;cursor:pointer;transition:background .15s;border:2px solid transparent;user-select:none}
-.time-item:last-child{margin-bottom:0}
-.time-item:hover{background:#f0f6ff}
-.time-item input[type=checkbox]{width:17px;height:17px;accent-color:#006633;cursor:pointer;flex-shrink:0}
-.time-nome{font-weight:600;color:#111;font-size:.92em;flex:1}
-.badge-pos{font-size:.68em;font-weight:700;padding:2px 7px;border-radius:9px;margin-left:auto;white-space:nowrap}
-.badge-1{background:#FFD700;color:#333}
-.badge-2{background:#C0C0C0;color:#333}
-.aviso-limite{color:#c00;font-size:.73em;padding:3px 9px;display:none;text-align:center;font-weight:600}
-.aviso-limite.show{display:block}
-.btns-finais{max-width:440px;margin:0 auto 28px}
-.btn-ver{display:block;width:100%;padding:15px;background:linear-gradient(135deg,#FFD700,#FFA500);color:#003366;border:none;border-radius:12px;font-size:1.05em;font-weight:700;cursor:pointer;box-shadow:0 4px 15px rgba(255,165,0,.4);transition:transform .2s;margin-bottom:9px}
-.btn-ver:hover{transform:translateY(-2px)}
-.btn-print{display:block;width:100%;padding:11px;background:rgba(255,255,255,.18);color:#fff;border:2px solid rgba(255,255,255,.4);border-radius:12px;font-size:.93em;font-weight:700;cursor:pointer}
-.btn-print:hover{background:rgba(255,255,255,.26)}
-.rm{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.75);z-index:1000;justify-content:center;align-items:flex-start;padding:20px;overflow-y:auto}
-.rm.ativo{display:flex}
-.rb{background:#fff;border-radius:16px;padding:26px;max-width:680px;width:100%;margin:auto;box-shadow:0 10px 40px rgba(0,0,0,.3)}
-.rb h2{color:#003366;text-align:center;margin-bottom:4px;font-size:1.35em}
-.rb .sub{text-align:center;color:#666;margin-bottom:18px;font-style:italic;font-size:.9em}
-.resumo-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.rg-card{border-radius:9px;overflow:hidden;border:1px solid #eee}
-.rg-card .rg-header{padding:6px 11px;color:#fff;font-weight:700;font-size:.85em}
-.rg-card .rg-body{padding:7px 11px}
-.rg-time{padding:3px 0;font-size:.85em;display:flex;align-items:center;gap:5px;border-bottom:1px dashed #eee}
-.rg-time:last-child{border-bottom:none}
-.rg-time .pos{font-size:.67em;font-weight:700;padding:1px 5px;border-radius:8px;flex-shrink:0}
-.rg-vazio{color:#ccc;font-style:italic;font-size:.8em;padding:3px 0}
-.bcf{display:block;margin:18px auto 0;padding:9px 28px;background:#003366;color:#fff;border:none;border-radius:8px;font-size:.95em;cursor:pointer;font-weight:700}
-.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(80px);background:#333;color:#fff;padding:9px 20px;border-radius:30px;font-size:.87em;font-weight:600;opacity:0;transition:all .3s;z-index:2000;pointer-events:none}
+body{font-family:'Segoe UI',Arial,sans-serif;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);min-height:100vh;padding:20px;color:#eee}
+.container{max-width:1200px;margin:0 auto}
+header{text-align:center;padding:24px 20px 16px}
+header h1{color:#FFD700;font-size:2.2em;text-shadow:2px 2px 6px rgba(0,0,0,.6);margin-bottom:5px}
+header p{color:#ccc;font-size:.92em}
+/* SEÇÃO */
+.secao{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:20px 22px;margin-bottom:22px}
+.secao h2{color:#FFD700;font-size:1.1em;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+/* UPLOAD */
+.drop-area{border:2px dashed rgba(255,215,0,.4);border-radius:12px;padding:28px;text-align:center;cursor:pointer;transition:all .2s;background:rgba(255,215,0,.03)}
+.drop-area:hover,.drop-area.over{border-color:#FFD700;background:rgba(255,215,0,.08)}
+.drop-area p{color:#aaa;margin-top:8px;font-size:.88em}
+.drop-area .icon{font-size:2.5em}
+.btn-upload{margin-top:14px;padding:9px 20px;background:#FFD700;color:#003366;border:none;border-radius:8px;font-size:.9em;font-weight:700;cursor:pointer}
+#fileInput{display:none}
+/* LISTA PARTICIPANTES */
+.participantes-lista{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.part-tag{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:5px 14px;font-size:.84em;display:flex;align-items:center;gap:6px;color:#eee}
+.part-tag .rm-btn{cursor:pointer;color:#ff6b6b;font-weight:700;font-size:1.1em;line-height:1}
+.part-tag .rm-btn:hover{color:#ff0000}
+/* RESULTADOS REAIS */
+.grupos-resultados{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.grupo-res-card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:11px;overflow:hidden}
+.grupo-res-header{padding:9px 14px;font-weight:700;font-size:.92em;display:flex;align-items:center;gap:8px}
+.grupo-res-header .gl{background:rgba(255,255,255,.2);width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.88em;font-weight:900;flex-shrink:0}
+.grupo-res-body{padding:10px 14px}
+.res-input{width:100%;padding:7px 10px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:7px;color:#fff;font-size:.88em;margin-bottom:7px}
+.res-input:last-child{margin-bottom:0}
+.res-input::placeholder{color:#888}
+.res-input:focus{outline:none;border-color:#FFD700;background:rgba(255,215,0,.08)}
+/* TABELA */
+.tabela-wrap{overflow-x:auto;margin-top:4px}
+table{width:100%;border-collapse:collapse;font-size:.82em;min-width:600px}
+thead th{background:rgba(255,215,0,.15);color:#FFD700;padding:9px 10px;text-align:center;border-bottom:2px solid rgba(255,215,0,.3);white-space:nowrap;position:sticky;top:0}
+thead th:first-child{text-align:left;min-width:130px}
+tbody tr{border-bottom:1px solid rgba(255,255,255,.07);transition:background .15s}
+tbody tr:hover{background:rgba(255,255,255,.06)}
+tbody td{padding:8px 10px;text-align:center;vertical-align:middle}
+tbody td:first-child{text-align:left;font-weight:600;color:#eee}
+.cel-acerto{background:rgba(76,175,80,.3);color:#a5d6a7;font-weight:700;border-radius:4px;padding:2px 6px}
+.cel-erro{color:#666}
+.cel-grupo{font-size:.78em;color:#aaa;padding:6px 10px;background:rgba(255,255,255,.03);text-align:left;font-style:italic}
+td.pontos{font-weight:900;font-size:1em;color:#FFD700}
+/* RANKING */
+.ranking-lista{margin-top:4px}
+.rank-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;margin-bottom:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);transition:all .2s}
+.rank-item.rank-1{background:rgba(255,215,0,.15);border-color:rgba(255,215,0,.4)}
+.rank-item.rank-2{background:rgba(192,192,192,.12);border-color:rgba(192,192,192,.3)}
+.rank-item.rank-3{background:rgba(205,127,50,.12);border-color:rgba(205,127,50,.25)}
+.rank-pos{font-size:1.4em;width:36px;text-align:center;flex-shrink:0}
+.rank-nome{flex:1;font-weight:700;font-size:.98em;color:#eee}
+.rank-pts{font-weight:900;font-size:1.15em;color:#FFD700}
+.rank-detail{font-size:.75em;color:#999;margin-top:1px}
+/* BOTÕES */
+.btns-acao{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.btn-calcular{padding:11px 22px;background:linear-gradient(135deg,#FFD700,#FFA500);color:#003366;border:none;border-radius:9px;font-size:.95em;font-weight:700;cursor:pointer;transition:transform .2s}
+.btn-calcular:hover{transform:translateY(-1px)}
+.btn-exportar{padding:11px 22px;background:#1D6F42;color:#fff;border:none;border-radius:9px;font-size:.95em;font-weight:700;cursor:pointer;transition:transform .2s}
+.btn-exportar:hover{transform:translateY(-1px)}
+.btn-limpar{padding:11px 18px;background:rgba(255,100,100,.2);color:#ff8080;border:1px solid rgba(255,100,100,.3);border-radius:9px;font-size:.88em;font-weight:700;cursor:pointer}
+.empty-msg{color:#666;font-style:italic;font-size:.88em;padding:16px 0;text-align:center}
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(80px);background:#333;color:#fff;padding:9px 20px;border-radius:30px;font-size:.86em;font-weight:600;opacity:0;transition:all .3s;z-index:2000;pointer-events:none}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .toast.ok{background:#2e7d32}
 .toast.err{background:#c62828}
-@media(max-width:640px){.grupos-grid{grid-template-columns:1fr}.resumo-grid{grid-template-columns:1fr}}
-@media print{body{background:#fff;padding:0}.save-bar,.btns-finais{display:none}.grupo-card{box-shadow:none;border:1px solid #ddd;break-inside:avoid}}
+.badge-s{display:inline-block;font-size:.68em;padding:2px 7px;border-radius:8px;font-weight:700;vertical-align:middle;margin-left:3px}
+.b1{background:#FFD700;color:#333}
+.b2{background:#C0C0C0;color:#333}
+.bx{background:#555;color:#aaa}
+@media(max-width:600px){.grupos-resultados{grid-template-columns:1fr}.btns-acao{flex-direction:column}}
 </style>
 </head>
 <body>
 <div class="container">
   <header>
-    <h1>🏆 Copa do Mundo 2026</h1>
-    <p>Apostas de Classificados &mdash; Quem passa de fase em cada grupo?</p>
+    <h1>📋 Organizador do Bolão</h1>
+    <p>Copa do Mundo 2026 &mdash; Consolide as apostas e calcule os acertos</p>
   </header>
 
-  <div class="save-bar">
-    <span class="status" id="saveStatus">💾 Apostas salvas automaticamente no navegador</span>
-    <button class="btn-json" onclick="exportarJSON()">⬇️ Backup JSON</button>
-    <label class="imp-lbl" for="impFile">⬆️ Importar JSON</label>
-    <input type="file" id="impFile" accept=".json" onchange="importarJSON(event)">
-    <button class="btn-xlsx btn-enviar" onclick="exportarParaOrganizador()">📤 Exportar e enviar ao organizador (.xlsx)</button>
+  <!-- PASSO 1: IMPORTAR ARQUIVOS -->
+  <div class="secao">
+    <h2>📥 Passo 1 — Importar apostas dos participantes</h2>
+    <div class="drop-area" id="dropArea" onclick="document.getElementById('fileInput').click()" ondragover="ev(event)" ondrop="drop(event)">
+      <div class="icon">📂</div>
+      <strong style="color:#FFD700">Clique ou arraste os arquivos .xlsx dos participantes</strong>
+      <p>Você pode importar vários arquivos de uma vez</p>
+      <button class="btn-upload" onclick="event.stopPropagation();document.getElementById('fileInput').click()">Selecionar arquivos</button>
+    </div>
+    <input type="file" id="fileInput" accept=".xlsx" multiple onchange="lerArquivos(event)">
+    <div class="participantes-lista" id="partLista"></div>
   </div>
 
-  <div class="nome-section">
-    <label for="nomeP">👤 Participante:</label>
-    <input type="text" id="nomeP" placeholder="Digite seu nome completo (obrigatório para envio)..." autocomplete="off">
+  <!-- PASSO 2: RESULTADOS REAIS -->
+  <div class="secao">
+    <h2>✅ Passo 2 — Inserir os classificados reais (após a fase de grupos)</h2>
+    <div class="grupos-resultados" id="gruposResultados"></div>
   </div>
 
-  <div class="instrucao">
-    <strong>Como apostar:</strong> Selecione <strong>exatamente 2 times</strong> de cada grupo que você acredita que vão se classificar.
-    O <strong>1º clique = 1º lugar</strong>, o <strong>2º clique = 2º lugar</strong>. Total: <strong>24 times</strong> (2 por grupo × 12 grupos).<br>
-    Quando terminar, clique em <strong style="color:#FFD700">📤 Exportar e enviar ao organizador</strong> e envie o arquivo gerado.
-  </div>
-
-  <p class="progresso-txt" id="progressoTxt">0 de 12 grupos completos (0 de 24 times selecionados)</p>
-  <div class="progresso-bar-wrap"><div class="progresso-bar" id="progressoBar" style="width:0%"></div></div>
-
-  <div class="grupos-grid" id="gruposContainer"></div>
-
-  <div class="btns-finais">
-    <button class="btn-ver" onclick="mostrarResumo()">✅ Ver Resumo das Apostas</button>
-    <button class="btn-print" onclick="window.print()">🖨️ Imprimir / Salvar PDF</button>
-  </div>
-</div>
-
-<div class="rm" id="rModal">
-  <div class="rb">
-    <h2>🏆 Classificados Apostados — Copa 2026</h2>
-    <p class="sub" id="rNome"></p>
-    <div class="resumo-grid" id="rConteudo"></div>
-    <button class="bcf" onclick="document.getElementById('rModal').classList.remove('ativo')">✕ Fechar</button>
+  <!-- PASSO 3: TABELA E RANKING -->
+  <div class="secao">
+    <h2>🏅 Passo 3 — Calcular acertos e ranking</h2>
+    <div class="btns-acao">
+      <button class="btn-calcular" onclick="calcular()">⚡ Calcular Acertos e Ranking</button>
+      <button class="btn-exportar" onclick="exportarResultado()">📊 Exportar resultado em Excel</button>
+      <button class="btn-limpar" onclick="limparTudo()">🗑️ Limpar tudo</button>
+    </div>
+    <div id="tabelaWrap" style="margin-top:18px"></div>
+    <div id="rankingWrap" style="margin-top:22px"></div>
   </div>
 </div>
 <div class="toast" id="toast"></div>
 
 <script>
 var GRUPOS=[
-  {l:'A',c:'#c1121f',times:['🇲🇽 México','🇰🇷 Coreia do Sul','🇨🇿 Tchéquia','🇿🇦 África do Sul']},
-  {l:'B',c:'#2a9d8f',times:['🇨🇦 Canadá','🇧🇦 Bósnia e Herzegovina','🇶🇦 Catar','🇨🇭 Suíça']},
-  {l:'C',c:'#e07a2f',times:['🇧🇷 Brasil','🇲🇦 Marrocos','🏴󠁧󠁢󠁳󠁣󠁴󠁿 Escócia','🇭🇹 Haiti']},
-  {l:'D',c:'#457b9d',times:['🇺🇸 Estados Unidos','🇵🇾 Paraguai','🇦🇺 Austrália','🇹🇷 Turquia']},
-  {l:'E',c:'#6d4c41',times:['🇩🇪 Alemanha','🇨🇼 Curaçao','🇨🇮 Costa do Marfim','🇪🇨 Equador']},
-  {l:'F',c:'#8338ec',times:['🇳🇱 Holanda','🇯🇵 Japão','🇸🇪 Suécia','🇹🇳 Tunísia']},
-  {l:'G',c:'#e76f51',times:['🇧🇪 Bélgica','🇪🇬 Egito','🇮🇷 Irã','🇳🇿 Nova Zelândia']},
-  {l:'H',c:'#d62828',times:['🇪🇸 Espanha','🇨🇻 Cabo Verde','🇸🇦 Arábia Saudita','🇺🇾 Uruguai']},
-  {l:'I',c:'#2b9348',times:['🇫🇷 França','🇸🇳 Senegal','🇮🇶 Iraque','🇳🇴 Noruega']},
-  {l:'J',c:'#0077b6',times:['🇦🇷 Argentina','🇩🇿 Argélia','🇦🇹 Áustria','🇯🇴 Jordânia']},
-  {l:'K',c:'#6a0572',times:['🇵🇹 Portugal','🇨🇩 RD Congo','🇺🇿 Uzbequistão','🇨🇴 Colômbia']},
-  {l:'L',c:'#b5451b',times:['🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra','🇭🇷 Croácia','🇬🇭 Gana','🇵🇦 Panamá']}
+  {l:'A',c:'#c1121f',times:['México','Coreia do Sul','Tchéquia','África do Sul']},
+  {l:'B',c:'#2a9d8f',times:['Canadá','Bósnia e Herzegovina','Catar','Suíça']},
+  {l:'C',c:'#e07a2f',times:['Brasil','Marrocos','Escócia','Haiti']},
+  {l:'D',c:'#457b9d',times:['Estados Unidos','Paraguai','Austrália','Turquia']},
+  {l:'E',c:'#6d4c41',times:['Alemanha','Curaçao','Costa do Marfim','Equador']},
+  {l:'F',c:'#8338ec',times:['Holanda','Japão','Suécia','Tunísia']},
+  {l:'G',c:'#e76f51',times:['Bélgica','Egito','Irã','Nova Zelândia']},
+  {l:'H',c:'#d62828',times:['Espanha','Cabo Verde','Arábia Saudita','Uruguai']},
+  {l:'I',c:'#2b9348',times:['França','Senegal','Iraque','Noruega']},
+  {l:'J',c:'#0077b6',times:['Argentina','Argélia','Áustria','Jordânia']},
+  {l:'K',c:'#6a0572',times:['Portugal','RD Congo','Uzbequistão','Colômbia']},
+  {l:'L',c:'#b5451b',times:['Inglaterra','Croácia','Gana','Panamá']}
 ];
-var selecionados=GRUPOS.map(function(){return[];});
-var SAVE_KEY='copa2026_class_v2';
 
-function limparEmoji(s){return s.replace(/[\u{1F000}-\u{FFFFF}\u{2600}-\u{27BF}]/gu,'').replace(/\uFE0F/g,'').trim();}
+// resultados[gi] = {p1:'', p2:''}
+var resultados = GRUPOS.map(function(){ return {p1:'',p2:''}; });
+// participantes = [{nome, apostas: [{p1,p2},...] }]
+var participantes = [];
 
-// Construir cards
-var cont=document.getElementById('gruposContainer');
+// ── CONSTRUIR INPUTS DE RESULTADO ────────────────────────────────
+var grRes = document.getElementById('gruposResultados');
 GRUPOS.forEach(function(g,gi){
-  var card=document.createElement('div');
-  card.className='grupo-card';
-  var h='<div class="grupo-header" style="background:'+g.c+'"><span class="letter">'+g.l+'</span><span>Grupo '+g.l+'</span><span class="sel-count" id="cnt_'+gi+'">0 / 2</span></div>';
-  var l='<div class="times-lista">';
-  g.times.forEach(function(t,ti){
-    l+='<label class="time-item" id="item_'+gi+'_'+ti+'" onclick="toggleTime('+gi+','+ti+',event)"><input type="checkbox" id="chk_'+gi+'_'+ti+'" onclick="return false"><span class="time-nome">'+t+'</span><span class="badge-pos" id="badge_'+gi+'_'+ti+'" style="display:none"></span></label>';
-  });
-  l+='</div><p class="aviso-limite" id="aviso_'+gi+'">⚠️ Já selecionou 2! Desmarque um para trocar.</p>';
-  card.innerHTML=h+l;
-  cont.appendChild(card);
+  var card = document.createElement('div');
+  card.className = 'grupo-res-card';
+  card.innerHTML = '<div class="grupo-res-header" style="background:'+g.c+'"><span class="gl">'+g.l+'</span><span>Grupo '+g.l+'</span></div>'+
+    '<div class="grupo-res-body">'+
+      '<input class="res-input" id="r1_'+gi+'" placeholder="🥇 1º classificado..." list="dl_'+gi+'" oninput="salvarRes('+gi+')" autocomplete="off">'+
+      '<input class="res-input" id="r2_'+gi+'" placeholder="🥈 2º classificado..." list="dl_'+gi+'" oninput="salvarRes('+gi+')" autocomplete="off">'+
+      '<datalist id="dl_'+gi+'">'+g.times.map(function(t){return'<option value="'+t+'">';}).join('')+'</datalist>'+
+    '</div>';
+  grRes.appendChild(card);
 });
 
-function toggleTime(gi,ti,e){
-  if(e)e.preventDefault();
-  var sel=selecionados[gi],idx=sel.indexOf(ti);
-  if(idx!==-1){sel.splice(idx,1);}
-  else{
-    if(sel.length>=2){
-      var av=document.getElementById('aviso_'+gi);
-      av.classList.add('show');setTimeout(function(){av.classList.remove('show');},2500);return;
-    }
-    sel.push(ti);
-  }
-  selecionados[gi]=sel;renderGrupo(gi);atualizarProgresso();salvarAuto();
+function salvarRes(gi){
+  resultados[gi].p1 = document.getElementById('r1_'+gi).value.trim();
+  resultados[gi].p2 = document.getElementById('r2_'+gi).value.trim();
+  salvarLS();
 }
 
-function renderGrupo(gi){
-  var g=GRUPOS[gi],sel=selecionados[gi];
-  g.times.forEach(function(t,ti){
-    var item=document.getElementById('item_'+gi+'_'+ti);
-    var chk=document.getElementById('chk_'+gi+'_'+ti);
-    var badge=document.getElementById('badge_'+gi+'_'+ti);
-    var posIdx=sel.indexOf(ti),isSel=posIdx!==-1;
-    chk.checked=isSel;
-    item.style.borderColor=isSel?GRUPOS[gi].c:'transparent';
-    item.style.background=isSel?'#f0fff4':'';
-    if(isSel){badge.style.display='inline-block';badge.textContent=posIdx===0?'🥇 1º':'🥈 2º';badge.className='badge-pos '+(posIdx===0?'badge-1':'badge-2');}
-    else{badge.style.display='none';}
+// ── DRAG & DROP ───────────────────────────────────────────────────
+function ev(e){e.preventDefault();document.getElementById('dropArea').classList.add('over');}
+document.getElementById('dropArea').addEventListener('dragleave',function(){this.classList.remove('over');});
+function drop(e){
+  e.preventDefault();document.getElementById('dropArea').classList.remove('over');
+  processarArquivos(e.dataTransfer.files);
+}
+function lerArquivos(e){ processarArquivos(e.target.files); e.target.value=''; }
+
+function processarArquivos(files){
+  Array.from(files).forEach(function(f){
+    if(!f.name.match(/\.xlsx$/i)){mostrarToast('Apenas .xlsx são aceitos: '+f.name,'err');return;}
+    var reader=new FileReader();
+    reader.onload=function(e){
+      try{
+        var wb=XLSX.read(e.target.result,{type:'arraybuffer'});
+        var ws=wb.Sheets['APOSTAS'];
+        if(!ws)throw new Error('Aba APOSTAS não encontrada');
+        var data=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+
+        // Linha 0: PARTICIPANTE: nome
+        var nome='';
+        if(data[0]&&data[0][0]==='PARTICIPANTE:') nome=String(data[0][1]||'').trim();
+        if(!nome) nome=f.name.replace('.xlsx','');
+
+        // Linhas 4+: Grupo A | 1º | 2º  (header na linha 3)
+        var apostas=GRUPOS.map(function(){return{p1:'',p2:''};});
+        for(var i=4;i<data.length&&i<16;i++){
+          var row=data[i];
+          var grp=String(row[0]||'').trim(); // "Grupo A"
+          var gl=grp.replace('Grupo ','').trim();
+          var gi=GRUPOS.findIndex(function(g){return g.l===gl;});
+          if(gi>=0){
+            apostas[gi]={p1:String(row[1]||'').trim(),p2:String(row[2]||'').trim()};
+          }
+        }
+
+        // Checar duplicado
+        var existe=participantes.findIndex(function(p){return p.nome===nome;});
+        if(existe>=0){participantes[existe]={nome:nome,apostas:apostas};mostrarToast('Atualizado: '+nome,'ok');}
+        else{participantes.push({nome:nome,apostas:apostas});mostrarToast('Importado: '+nome,'ok');}
+        renderParticipantes();salvarLS();
+      }catch(err){mostrarToast('Erro em '+f.name+': '+err.message,'err');}
+    };
+    reader.readAsArrayBuffer(f);
   });
-  document.getElementById('cnt_'+gi).textContent=sel.length+' / 2';
 }
 
-function atualizarProgresso(){
-  var comp=selecionados.filter(function(s){return s.length===2;}).length;
-  var tot=selecionados.reduce(function(a,s){return a+s.length;},0);
-  document.getElementById('progressoBar').style.width=(comp/12*100)+'%';
-  document.getElementById('progressoTxt').textContent=comp+' de 12 grupos completos ('+tot+' de 24 times selecionados)';
+function renderParticipantes(){
+  var lista=document.getElementById('partLista');
+  lista.innerHTML='';
+  if(!participantes.length){lista.innerHTML='<span class="empty-msg">Nenhum arquivo importado ainda.</span>';return;}
+  participantes.forEach(function(p,i){
+    var tag=document.createElement('span');
+    tag.className='part-tag';
+    tag.innerHTML='👤 '+p.nome+' <span class="rm-btn" title="Remover" onclick="removerPart('+i+')">✕</span>';
+    lista.appendChild(tag);
+  });
 }
 
-var saveTimer=null;
-function coletarDados(){return{nome:document.getElementById('nomeP').value,selecionados:selecionados.map(function(s){return s.slice();})};}
-function aplicarDados(d){
-  if(d.nome)document.getElementById('nomeP').value=d.nome;
-  if(d.selecionados)d.selecionados.forEach(function(s,gi){if(gi<GRUPOS.length){selecionados[gi]=s.slice();renderGrupo(gi);}});
-  atualizarProgresso();
-}
-function salvarAuto(){
-  clearTimeout(saveTimer);
-  saveTimer=setTimeout(function(){
-    try{
-      var d=coletarDados();localStorage.setItem(SAVE_KEY,JSON.stringify(d));
-      var c=selecionados.filter(function(s){return s.length===2;}).length;
-      document.getElementById('saveStatus').innerHTML='✅ Salvo · '+c+'/12 grupos · '+new Date().toLocaleTimeString('pt-BR');
-    }catch(e){}
-  },700);
-}
-document.getElementById('nomeP').addEventListener('input',salvarAuto);
-window.addEventListener('load',function(){
-  try{var r=localStorage.getItem(SAVE_KEY);if(r){aplicarDados(JSON.parse(r));var c=selecionados.filter(function(s){return s.length===2;}).length;document.getElementById('saveStatus').innerHTML='✅ Restaurado · '+c+'/12 grupos';mostrarToast('Apostas restauradas!','ok');}}catch(e){}
-});
-
-function exportarJSON(){
-  var d=coletarDados();d.exportadoEm=new Date().toLocaleString('pt-BR');d.tipo='copa2026_class';
-  var blob=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
-  var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;
-  a.download='backup_apostas_'+(d.nome||'participante').replace(/[^a-zA-Z0-9]/g,'_')+'.json';
-  a.click();URL.revokeObjectURL(url);mostrarToast('Backup JSON exportado!','ok');
-}
-function importarJSON(evt){
-  var file=evt.target.files[0];if(!file)return;
-  var reader=new FileReader();
-  reader.onload=function(e){try{var d=JSON.parse(e.target.result);if(!d.selecionados)throw new Error();aplicarDados(d);localStorage.setItem(SAVE_KEY,JSON.stringify(d));mostrarToast('Apostas importadas!','ok');}catch(er){mostrarToast('Arquivo inválido!','err');}};
-  reader.readAsText(file);evt.target.value='';
+function removerPart(i){
+  participantes.splice(i,1);renderParticipantes();salvarLS();mostrarToast('Participante removido','ok');
 }
 
-// ── EXPORTAR PARA ORGANIZADOR ─────────────────────────────────────
-function exportarParaOrganizador(){
-  var nome=document.getElementById('nomeP').value.trim();
-  if(!nome){mostrarToast('⚠️ Preencha seu nome antes de exportar!','err');document.getElementById('nomeP').focus();return;}
-  var incompletos=selecionados.filter(function(s){return s.length<2;}).length;
-  if(incompletos>0){
-    if(!confirm(incompletos+' grupo(s) ainda incompleto(s). Deseja exportar assim mesmo?'))return;
+// ── CALCULAR ─────────────────────────────────────────────────────
+function normalizar(s){return(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();}
+function acertou(aposta,reais){
+  var a=normalizar(aposta);
+  return reais.some(function(r){return normalizar(r)===a&&a!=='';});
+}
+
+function calcular(){
+  if(!participantes.length){mostrarToast('Importe ao menos um participante!','err');return;}
+
+  // Coletar resultados reais atuais
+  GRUPOS.forEach(function(g,gi){
+    resultados[gi].p1=document.getElementById('r1_'+gi).value.trim();
+    resultados[gi].p2=document.getElementById('r2_'+gi).value.trim();
+  });
+
+  var reaisOk = resultados.filter(function(r){return r.p1||r.p2;}).length;
+  var temResultados = reaisOk > 0;
+
+  // ── TABELA COMPARATIVA ──────────────────────────────────────────
+  var tWrap=document.getElementById('tabelaWrap');
+  var html='<h3 style="color:#FFD700;margin-bottom:10px">📊 Tabela Comparativa de Apostas</h3><div class="tabela-wrap"><table><thead><tr><th>Participante</th>';
+  GRUPOS.forEach(function(g){html+='<th style="color:'+lighten(g.c)+'">G'+g.l+'</th>';});
+  if(temResultados)html+='<th style="color:#FFD700;font-size:1em">🏅 Pontos</th>';
+  html+='</tr></thead><tbody>';
+
+  var scores=[];
+  participantes.forEach(function(p){
+    var pts=0,celulas='';
+    GRUPOS.forEach(function(g,gi){
+      var ap=p.apostas[gi]||{p1:'',p2:''};
+      var reais=[resultados[gi].p1,resultados[gi].p2];
+      var ac1=temResultados&&acertou(ap.p1,reais);
+      var ac2=temResultados&&acertou(ap.p2,reais);
+      if(ac1)pts++;if(ac2)pts++;
+      var t1=ap.p1?'<span class="badge-s '+(ac1?'b1':'bx')+'">'+ap.p1.substring(0,10)+'</span>':'<span style="color:#444">—</span>';
+      var t2=ap.p2?'<span class="badge-s '+(ac2?'b2':'bx')+'">'+ap.p2.substring(0,10)+'</span>':'<span style="color:#444">—</span>';
+      celulas+='<td style="min-width:90px">'+t1+'<br>'+t2+'</td>';
+    });
+    scores.push({nome:p.nome,pts:pts,celulas:celulas});
+  });
+
+  // Ordenar por pontuação (maior primeiro)
+  scores.sort(function(a,b){return b.pts-a.pts;});
+
+  scores.forEach(function(s){
+    html+='<tr><td>👤 '+s.nome+'</td>'+s.celulas;
+    if(temResultados)html+='<td class="pontos">'+s.pts+'/24</td>';
+    html+='</tr>';
+  });
+  html+='</tbody></table></div>';
+  tWrap.innerHTML=html;
+
+  // ── RANKING ─────────────────────────────────────────────────────
+  if(temResultados){
+    var rWrap=document.getElementById('rankingWrap');
+    var rHtml='<h3 style="color:#FFD700;margin-bottom:12px">🏆 Ranking — Mais Acertos</h3><div class="ranking-lista">';
+    var medalhas=['🥇','🥈','🥉'];
+    scores.forEach(function(s,i){
+      var cls=i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'';
+      var pct=Math.round(s.pts/24*100);
+      rHtml+='<div class="rank-item '+cls+'"><span class="rank-pos">'+(medalhas[i]||('#'+(i+1)))+'</span>'+
+        '<div><div class="rank-nome">'+s.nome+'</div><div class="rank-detail">'+pct+'% de acerto</div></div>'+
+        '<span class="rank-pts">'+s.pts+' <small style="font-size:.65em;color:#aaa">/ 24</small></span></div>';
+    });
+    rHtml+='</div>';
+    rWrap.innerHTML=rHtml;
   }
-  if(typeof XLSX==='undefined'){mostrarToast('Aguarde o carregamento da biblioteca...','err');return;}
+  mostrarToast('Cálculo concluído!','ok');
+}
+
+function lighten(hex){return hex;}
+
+// ── EXPORTAR RESULTADO ───────────────────────────────────────────
+function exportarResultado(){
+  if(!participantes.length){mostrarToast('Nenhum dado para exportar','err');return;}
+  calcular();
   var wb=XLSX.utils.book_new();
 
-  // ─── Aba "APOSTAS" — formato padrão para o organizador ─────────
-  // Linha 1: metadados
-  // Linhas 3+: Grupo | 1º Classificado | 2º Classificado
-  var aposRows=[
-    ['PARTICIPANTE:', nome, '', 'EXPORTADO EM:', new Date().toLocaleString('pt-BR')],
-    ['VERSAO:', 'copa2026_v1', '', '', ''],
-    [],
-    ['GRUPO','1º CLASSIFICADO','2º CLASSIFICADO']
-  ];
+  // Coletar scores novamente
   GRUPOS.forEach(function(g,gi){
-    var sel=selecionados[gi];
-    var p1=sel[0]!==undefined ? limparEmoji(g.times[sel[0]]) : '';
-    var p2=sel[1]!==undefined ? limparEmoji(g.times[sel[1]]) : '';
-    aposRows.push(['Grupo '+g.l, p1, p2]);
+    resultados[gi].p1=document.getElementById('r1_'+gi).value.trim();
+    resultados[gi].p2=document.getElementById('r2_'+gi).value.trim();
   });
 
-  var wsApostas=XLSX.utils.aoa_to_sheet(aposRows);
-  wsApostas['!cols']=[{wch:10},{wch:26},{wch:26},{wch:14},{wch:22}];
-  XLSX.utils.book_append_sheet(wb,wsApostas,'APOSTAS');
-
-  // ─── Aba "DETALHES" — todos os 4 times de cada grupo com status ─
-  var detRows=[
-    ['APOSTAS DETALHADAS — '+nome],
-    [],
-    ['GRUPO','TIME','APOSTA']
-  ];
-  GRUPOS.forEach(function(g,gi){
-    var sel=selecionados[gi];
-    g.times.forEach(function(t,ti){
-      var posIdx=sel.indexOf(ti);
-      var status=posIdx===0?'1º Lugar':posIdx===1?'2º Lugar':'Eliminado';
-      detRows.push(['Grupo '+g.l, limparEmoji(t), status]);
+  var scores=participantes.map(function(p){
+    var pts=0,detalhes=[];
+    GRUPOS.forEach(function(g,gi){
+      var ap=p.apostas[gi]||{p1:'',p2:''};
+      var reais=[resultados[gi].p1,resultados[gi].p2];
+      var ac1=acertou(ap.p1,reais),ac2=acertou(ap.p2,reais);
+      if(ac1)pts++;if(ac2)pts++;
+      detalhes.push({g:g.l,p1:ap.p1,p2:ap.p2,ac1:ac1,ac2:ac2});
     });
-    detRows.push([]);
-  });
-  var wsDet=XLSX.utils.aoa_to_sheet(detRows);
-  wsDet['!cols']=[{wch:10},{wch:26},{wch:14}];
-  wsDet['!merges']=[{s:{r:0,c:0},e:{r:0,c:2}}];
-  XLSX.utils.book_append_sheet(wb,wsDet,'DETALHES');
+    return{nome:p.nome,pts:pts,detalhes:detalhes};
+  }).sort(function(a,b){return b.pts-a.pts;});
 
-  var nomeArq='apostas_copa2026_'+nome.replace(/[^a-zA-Z0-9]/g,'_')+'.xlsx';
-  XLSX.writeFile(wb,nomeArq);
-  mostrarToast('✅ Arquivo gerado: '+nomeArq,'ok');
-  setTimeout(function(){alert('Arquivo "'+nomeArq+'" gerado!\n\nEnvie este arquivo para o organizador do bolão por WhatsApp, e-mail ou como preferir.');},400);
+  // Aba RANKING
+  var rankRows=[
+    ['BOLÃO COPA DO MUNDO 2026 — RANKING FINAL'],
+    ['Gerado em:', new Date().toLocaleString('pt-BR')],
+    [],
+    ['POSIÇÃO','PARTICIPANTE','ACERTOS','TOTAL','% ACERTO']
+  ];
+  scores.forEach(function(s,i){
+    rankRows.push([i+1, s.nome, s.pts, 24, Math.round(s.pts/24*100)+'%']);
+  });
+  var wsRank=XLSX.utils.aoa_to_sheet(rankRows);
+  wsRank['!cols']=[{wch:10},{wch:28},{wch:10},{wch:8},{wch:10}];
+  wsRank['!merges']=[{s:{r:0,c:0},e:{r:0,c:4}}];
+  XLSX.utils.book_append_sheet(wb,wsRank,'RANKING');
+
+  // Aba COMPARATIVO
+  var cabecalho=['PARTICIPANTE'];
+  GRUPOS.forEach(function(g){cabecalho.push('G'+g.l+' 1º','G'+g.l+' 2º');});
+  cabecalho.push('PONTOS');
+  var compRows=[['TABELA COMPARATIVA DETALHADA'],[''],cabecalho];
+  scores.forEach(function(s){
+    var row=[s.nome];
+    s.detalhes.forEach(function(d){row.push(d.p1+(d.ac1?' ✓':''),d.p2+(d.ac2?' ✓':''));});
+    row.push(s.pts+'/24');
+    compRows.push(row);
+  });
+  // Linha dos resultados reais
+  var linhaReal=['>>> RESULTADO REAL <<<'];
+  GRUPOS.forEach(function(g,gi){linhaReal.push(resultados[gi].p1||'—',resultados[gi].p2||'—');});
+  compRows.push([]);compRows.push(linhaReal);
+  var wsComp=XLSX.utils.aoa_to_sheet(compRows);
+  wsComp['!merges']=[{s:{r:0,c:0},e:{r:0,c:cabecalho.length-1}}];
+  XLSX.utils.book_append_sheet(wb,wsComp,'COMPARATIVO');
+
+  // Aba por participante
+  scores.forEach(function(s){
+    var pRows=[
+      [s.nome+' — Apostas e Acertos'],
+      [],
+      ['GRUPO','APOSTA 1º','ACERTOU?','APOSTA 2º','ACERTOU?'],
+    ];
+    s.detalhes.forEach(function(d){
+      pRows.push(['Grupo '+d.g, d.p1||'—', d.ac1?'✓ SIM':'✗ NÃO', d.p2||'—', d.ac2?'✓ SIM':'✗ NÃO']);
+    });
+    pRows.push([]);pRows.push(['TOTAL DE ACERTOS:', s.pts, '', 'DE:', 24]);
+    var wsP=XLSX.utils.aoa_to_sheet(pRows);
+    wsP['!cols']=[{wch:10},{wch:22},{wch:10},{wch:22},{wch:10}];
+    wsP['!merges']=[{s:{r:0,c:0},e:{r:0,c:4}}];
+    var nomeFicha=s.nome.substring(0,25).replace(/[^a-zA-Z0-9 ]/g,'').trim()||'Part';
+    XLSX.utils.book_append_sheet(wb,wsP,nomeFicha);
+  });
+
+  XLSX.writeFile(wb,'resultado_bolao_copa2026_'+new Date().toLocaleDateString('pt-BR').replace(/\//g,'-')+'.xlsx');
+  mostrarToast('Excel exportado com sucesso!','ok');
 }
 
-function mostrarResumo(){
-  var nome=document.getElementById('nomeP').value||'Sem nome';
-  document.getElementById('rNome').textContent='Participante: '+nome;
-  var html='';
-  GRUPOS.forEach(function(g,gi){
-    var sel=selecionados[gi];
-    html+='<div class="rg-card"><div class="rg-header" style="background:'+g.c+'">Grupo '+g.l+' '+(sel.length===2?'✅':'⬜ '+sel.length+'/2')+'</div><div class="rg-body">';
-    if(!sel.length){html+='<p class="rg-vazio">Não apostado</p>';}
-    else{sel.forEach(function(ti,pos){html+='<div class="rg-time"><span class="pos '+(pos===0?'badge-1':'badge-2')+'">'+(pos===0?'🥇 1º':'🥈 2º')+'</span>'+g.times[ti]+'</div>';});
-    if(sel.length<2)html+='<div class="rg-time"><span class="rg-vazio">— 2º não apostado</span></div>';}
-    html+='</div></div>';
-  });
-  document.getElementById('rConteudo').innerHTML=html;
-  document.getElementById('rModal').classList.add('ativo');
+// ── LOCALSTORAGE ─────────────────────────────────────────────────
+var LS_KEY='copa2026_organizador';
+function salvarLS(){
+  try{localStorage.setItem(LS_KEY,JSON.stringify({participantes:participantes,resultados:resultados}));}catch(e){}
+}
+window.addEventListener('load',function(){
+  try{
+    var r=localStorage.getItem(LS_KEY);
+    if(r){
+      var d=JSON.parse(r);
+      if(d.participantes)participantes=d.participantes;
+      if(d.resultados){
+        d.resultados.forEach(function(res,gi){
+          resultados[gi]=res;
+          if(res.p1)document.getElementById('r1_'+gi).value=res.p1;
+          if(res.p2)document.getElementById('r2_'+gi).value=res.p2;
+        });
+      }
+      renderParticipantes();
+      if(participantes.length)mostrarToast(participantes.length+' participante(s) restaurado(s)','ok');
+    }
+  }catch(e){}
+});
+
+function limparTudo(){
+  if(!confirm('Limpar todos os participantes e resultados?'))return;
+  participantes=[];resultados=GRUPOS.map(function(){return{p1:'',p2:''};});
+  GRUPOS.forEach(function(g,gi){document.getElementById('r1_'+gi).value='';document.getElementById('r2_'+gi).value='';});
+  document.getElementById('tabelaWrap').innerHTML='';
+  document.getElementById('rankingWrap').innerHTML='';
+  renderParticipantes();localStorage.removeItem(LS_KEY);mostrarToast('Dados limpos!','ok');
 }
 
 function mostrarToast(msg,tipo){var t=document.getElementById('toast');t.textContent=msg;t.className='toast '+(tipo||'')+' show';setTimeout(function(){t.className='toast';},3200);}
