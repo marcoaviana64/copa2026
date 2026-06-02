@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manual do Bolão — Copa 2026</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#003366;min-height:100vh;padding:16px}
+.wrap{max-width:480px;margin:0 auto}
+
+/* HEADER */
+.header{text-align:center;padding:24px 16px 20px}
+.header h1{color:#FFD700;font-size:1.9em;text-shadow:2px 2px 6px rgba(0,0,0,.5);line-height:1.2}
+.header p{color:#cce5ff;font-size:.9em;margin-top:6px;opacity:.9}
+
+/* CARDS */
+.card{background:#fff;border-radius:16px;margin-bottom:14px;overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,.25)}
+.card-header{padding:12px 18px;display:flex;align-items:center;gap:10px;color:#fff;font-weight:700;font-size:1em}
+.card-header .icon{font-size:1.4em;flex-shrink:0}
+.card-body{padding:16px 18px}
+
+/* STEP */
+.step{display:flex;gap:13px;margin-bottom:14px;align-items:flex-start}
+.step:last-child{margin-bottom:0}
+.step-num{background:#003366;color:#FFD700;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1em;flex-shrink:0;margin-top:1px}
+.step-txt{flex:1}
+.step-txt strong{display:block;color:#003366;font-size:.97em;margin-bottom:3px}
+.step-txt span{color:#444;font-size:.87em;line-height:1.55}
+
+/* DESTAQUE */
+.destaque{background:#f0fff4;border-left:4px solid #006633;border-radius:0 10px 10px 0;padding:10px 13px;margin:10px 0;font-size:.88em;color:#004d22;line-height:1.5}
+.destaque strong{color:#006633}
+
+/* PREMIAÇÃO */
+.premio-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:4px}
+.premio-item{text-align:center;padding:12px 6px;border-radius:12px}
+.premio-item .med{font-size:2em;display:block;margin-bottom:4px}
+.premio-item .pos{font-weight:700;font-size:.8em;color:#555}
+.premio-item .pct{font-weight:900;font-size:1.25em;margin:2px 0}
+.premio-item .desc{font-size:.72em;color:#777}
+.p1{background:#fff8dc;border:2px solid #FFD700}
+.p1 .pct{color:#b8860b}
+.p2{background:#f5f5f5;border:2px solid #C0C0C0}
+.p2 .pct{color:#555}
+.p3{background:#fff3ec;border:2px solid #cd7f32}
+.p3 .pct{color:#7d4a1e}
+
+/* EXEMPLO VISUAL */
+.exemplo-grupo{border:2px solid #e0e0e0;border-radius:12px;overflow:hidden;margin-top:10px}
+.ex-header{background:#c1121f;color:#fff;padding:8px 14px;font-weight:700;font-size:.88em;display:flex;justify-content:space-between}
+.ex-time{display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid #f0f0f0;font-size:.88em}
+.ex-time:last-child{border-bottom:none}
+.ex-chk{width:18px;height:18px;border:2px solid #ccc;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75em}
+.ex-chk.marcado1{background:#006633;border-color:#006633;color:#fff}
+.ex-chk.marcado2{background:#006633;border-color:#006633;color:#fff}
+.ex-nome{flex:1;font-weight:600;color:#111}
+.ex-badge{font-size:.68em;font-weight:700;padding:2px 8px;border-radius:9px}
+.ex-b1{background:#FFD700;color:#333}
+.ex-b2{background:#C0C0C0;color:#333}
+
+/* PONTUAÇÃO */
+.pont-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px dashed #eee;font-size:.9em}
+.pont-row:last-child{border-bottom:none}
+.pont-label{color:#333}
+.pont-val{font-weight:700;color:#003366;font-size:1em}
+
+/* AVISO */
+.aviso{background:#fff3cd;border:1px solid #ffc107;border-radius:12px;padding:13px 16px;margin-bottom:14px;display:flex;gap:10px;align-items:flex-start}
+.aviso .ico{font-size:1.5em;flex-shrink:0}
+.aviso p{font-size:.86em;color:#664d03;line-height:1.55}
+.aviso strong{color:#4d3700}
+
+/* VALOR */
+.valor-box{background:linear-gradient(135deg,#003366,#006633);border-radius:14px;padding:18px;text-align:center;margin-bottom:14px;color:#fff}
+.valor-box .valor{font-size:2.4em;font-weight:900;color:#FFD700;text-shadow:1px 1px 4px rgba(0,0,0,.4)}
+.valor-box p{font-size:.85em;opacity:.85;margin-top:4px}
+
+/* FOOTER */
+.footer{text-align:center;padding:16px 0 8px;color:rgba(255,255,255,.45);font-size:.75em}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <h1>🏆 Bolão Copa do Mundo 2026</h1>
+    <p>Manual do participante — leia antes de preencher</p>
+  </div>
+
+  <!-- VALOR -->
+  <div class="valor-box">
+    <div class="valor">R$ 50,00</div>
+    <p>Valor de participação por pessoa</p>
+  </div>
+
+  <!-- PREMIAÇÃO -->
+  <div class="card">
+    <div class="card-header" style="background:#003366">
+      <span class="icon">🏅</span> Premiação
+    </div>
+    <div class="card-body">
+      <div class="premio-grid">
+        <div class="premio-item p1">
+          <span class="med">🥇</span>
+          <div class="pos">1º lugar</div>
+          <div class="pct">70%</div>
+          <div class="desc">do total arrecadado</div>
+        </div>
+        <div class="premio-item p2">
+          <span class="med">🥈</span>
+          <div class="pos">2º lugar</div>
+          <div class="pct">20%</div>
+          <div class="desc">do total arrecadado</div>
+        </div>
+        <div class="premio-item p3">
+          <span class="med">🥉</span>
+          <div class="pos">3º lugar</div>
+          <div class="pct">10%</div>
+          <div class="desc">do total arrecadado</div>
+        </div>
+      </div>
+      <div class="destaque" style="margin-top:14px">
+        Exemplo com <strong>80 participantes:</strong> prêmio total = <strong>R$ 4.000</strong><br>
+        🥇 R$ 2.800 &nbsp;|&nbsp; 🥈 R$ 800 &nbsp;|&nbsp; 🥉 R$ 400
+      </div>
+    </div>
+  </div>
+
+  <!-- COMO FUNCIONA -->
+  <div class="card">
+    <div class="card-header" style="background:#006633">
+      <span class="icon">📋</span> O que você precisa fazer
+    </div>
+    <div class="card-body">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-txt">
+          <strong>Digite seu nome completo</strong>
+          <span>No campo no topo do formulário. É obrigatório para identificar sua aposta.</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-txt">
+          <strong>Escolha 2 times em cada grupo</strong>
+          <span>São 12 grupos (A a L). Em cada um, selecione os 2 times que você acha que vão se classificar.</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-txt">
+          <strong>1º clique = 1º lugar &nbsp;·&nbsp; 2º clique = 2º lugar</strong>
+          <span>A ordem importa! O primeiro time que você clicar é o que você aposta em 1º lugar no grupo.</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-txt">
+          <strong>Exporte e envie o arquivo</strong>
+          <span>Clique em <strong>📤 Exportar e enviar ao organizador (.xlsx)</strong> no final da página. Um arquivo será baixado — envie ao organizador por WhatsApp ou e-mail.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXEMPLO VISUAL -->
+  <div class="card">
+    <div class="card-header" style="background:#e07a2f">
+      <span class="icon">👁️</span> Exemplo — como fica na tela
+    </div>
+    <div class="card-body">
+      <p style="font-size:.85em;color:#555;margin-bottom:10px">Você clicou em <strong>Brasil</strong> primeiro, depois em <strong>Marrocos</strong>:</p>
+      <div class="exemplo-grupo">
+        <div class="ex-header"><span>Grupo C</span><span>2 / 2 ✅</span></div>
+        <div class="ex-time" style="background:#f0fff4;border:2px solid #e07a2f;margin:0">
+          <div class="ex-chk marcado1">✓</div>
+          <span class="ex-nome">🇧🇷 Brasil</span>
+          <span class="ex-badge ex-b1">🥇 1º</span>
+        </div>
+        <div class="ex-time" style="background:#f0fff4;border:2px solid #e07a2f;border-top:none;margin:0">
+          <div class="ex-chk marcado2">✓</div>
+          <span class="ex-nome">🇲🇦 Marrocos</span>
+          <span class="ex-badge ex-b2">🥈 2º</span>
+        </div>
+        <div class="ex-time">
+          <div class="ex-chk"></div>
+          <span class="ex-nome" style="color:#999">🏴󠁧󠁢󠁳󠁣󠁴󠁿 Escócia</span>
+        </div>
+        <div class="ex-time">
+          <div class="ex-chk"></div>
+          <span class="ex-nome" style="color:#999">🇭🇹 Haiti</span>
+        </div>
+      </div>
+      <div class="destaque" style="margin-top:10px">
+        💡 Para <strong>trocar um time</strong>, clique nele novamente para desmarcar. Depois clique no outro.
+      </div>
+    </div>
+  </div>
+
+  <!-- PONTUAÇÃO -->
+  <div class="card">
+    <div class="card-header" style="background:#0077b6">
+      <span class="icon">🎯</span> Como é calculada a pontuação
+    </div>
+    <div class="card-body">
+      <div class="pont-row">
+        <span class="pont-label">Acertou o time classificado (qualquer posição)</span>
+        <span class="pont-val">+1 pt</span>
+      </div>
+      <div class="pont-row">
+        <span class="pont-label">Acertou o time <strong>E</strong> a posição (1º ou 2º)</span>
+        <span class="pont-val">+2 pts</span>
+      </div>
+      <div class="destaque">
+        Quem somar <strong>mais pontos</strong> ao final da fase de grupos <strong>ganha o bolão</strong>. Em caso de empate, critérios de desempate serão definidos pelo organizador.
+      </div>
+    </div>
+  </div>
+
+  <!-- AVISOS -->
+  <div class="aviso">
+    <span class="ico">⚠️</span>
+    <p><strong>Suas apostas ficam salvas automaticamente</strong> no navegador. Se fechar e abrir de novo no mesmo celular/computador, elas voltam. Mas se trocar de dispositivo, precisará refazer.</p>
+  </div>
+
+  <div class="aviso">
+    <span class="ico">📅</span>
+    <p><strong>Envie seu arquivo antes do início da Copa!</strong> Apostas recebidas após o início dos jogos não serão aceitas. Fique de olho no prazo com o organizador.</p>
+  </div>
+
+  <div class="aviso" style="background:#e8f5e9;border-color:#4caf50">
+    <span class="ico">❓</span>
+    <p><strong>Ficou com dúvida?</strong> Fale com o organizador do bolão antes de enviar o arquivo.</p>
+  </div>
+
+  <div class="footer">Copa do Mundo 2026 · Bolão dos Grupos</div>
+
+</div>
+</body>
+</html>
